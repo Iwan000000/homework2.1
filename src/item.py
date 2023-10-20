@@ -80,3 +80,17 @@ class Item:
                 items.append(item)
         cls.all = items
         return items
+
+    def __repr__(self):
+        """
+        Магический метод для отображения информации об объекте класса в режиме отладки
+        :return: Выводит строку с названием товара, ценой и колличеством
+        """
+        return f"Item('{self.name}', {self.price}, {self.quantity})"
+
+    def __str__(self):
+        """
+        Магический метод для отображения информации об объекте класса для пользователей
+        :return: Выводит название товара
+        """
+        return f"{self.name}"

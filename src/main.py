@@ -2,8 +2,8 @@ from item import Item
 
 
 if __name__ == '__main__':
-    items = Item.instantiate_from_csv('items.csv')
-
-    for item in items:
-        print(f"Наименование: {item.name}, Стоимость: {item.price}, Колличество: {item.quantity}")
-
+     item1 = Item("Смартфон", 10000, 20)
+     print(item1.__str__())
+     print(item1.__repr__())
+     assert repr(item1) == "Item('Смартфон', 10000, 20)"
+     assert str(item1) == 'Смартфон'
