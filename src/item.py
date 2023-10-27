@@ -1,5 +1,6 @@
 import csv
 
+
 class Item:
     """
      Класс для представления товара в магазине.
@@ -19,7 +20,6 @@ class Item:
         self.__name = name
         self.__price = price
         self.__quantity = quantity
-
 
     @property
     def name(self):
@@ -81,6 +81,7 @@ class Item:
         cls.all = items
         return items
 
+
     def __repr__(self):
         """
         Магический метод для отображения информации об объекте класса в режиме отладки
@@ -94,3 +95,9 @@ class Item:
         :return: Выводит название товара
         """
         return f"{self.name}"
+
+    def __add__(self, other):
+        if isinstance(other, Item):
+            return int(self.quantity) + int(other.quantity)
+        else:
+            raise TypeError("Нельзя сложить классы 'Item' и чем-то другим.")
