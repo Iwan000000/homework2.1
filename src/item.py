@@ -16,10 +16,11 @@ class Item:
         :param price: Цена за единицу товара.
         :param quantity: Количество товара в магазине.
         """
-
+        super().__init__()
         self.__name = name
         self.__price = price
         self.__quantity = quantity
+
 
     @property
     def name(self):
@@ -97,6 +98,11 @@ class Item:
         return f"{self.name}"
 
     def __add__(self, other):
+        """
+        Магический метод, который позволяет прибавлять к экземпляру класса объект произвольного типа данных
+        :param other: Принимает остаток товара в магазине и складывает с определённым товаром
+        :return: Выводит общие колличество
+        """
         if isinstance(other, Item):
             return int(self.quantity) + int(other.quantity)
         else:
