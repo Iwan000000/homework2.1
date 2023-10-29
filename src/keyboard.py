@@ -22,7 +22,7 @@ class MixinLang:
             self.language = self.lang_list[0]
 
 
-class MixinLang(Item, MixinLang):
+class Keyboard(Item, MixinLang):
     """
     Класс Keyboard.
     Класс представляет объект клавиатуры и наследует
