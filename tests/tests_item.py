@@ -7,7 +7,6 @@ def test_item_name_getter():
     assert item.name == 'Смартфон'
     assert item.name != 'смартфон'
 
-
 def test_item_price_getter():
     item = Item('Смартфон', 10.0, 5)
     assert item.price == 10.0
@@ -22,20 +21,35 @@ def test_item_name_setter():
     item = Item('name', 10.0, 5)
     item1 = Item('name', 10.0, 5)
     item2 = Item('name', 10.0, 5)
+    item3 = Item('name', 10.0, 5)
+    item4 = Item('name', 10.0, 5)
     item.name = 'СуперСмартфон'
     item1.name = 'Смартфон'
     item2.name = 'Смарт'
+    item3.name = 'суперсмарт'
+    item4.name = 'супер смарт'
     assert item.name == 'СуперСмарт'
     assert item.name != 'суперсмарт'
     assert item1.name == 'Смартфон'
     assert item1.name != 'смартфон'
     assert item2.name == 'Смарт'
     assert item2.name != 'Смартфон'
+    assert item3.name == 'суперсмарт'
+    assert item4.name == 'супер смар'
 
 def test_string_to_number():
-    assert Item.string_to_number("10.0") == 10.0
+    assert Item.string_to_number("10.2") == 10.2
     assert Item.string_to_number("10.0") != "10.0"
-    assert Item.string_to_number("10.0") == 10
+    assert Item.string_to_number("10") == 10.0
+    assert Item.string_to_number("-5.5") == -5.5
+    assert Item.string_to_number("0") == 0.0
+
+def test_string_to_number_with_invalid_string():
+    try:
+        Item.string_to_number("abc")
+        assert False
+    except ValueError:
+        assert True
 
 def test_instantiate_from_csv():
     items = Item.instantiate_from_csv('items.csv')
@@ -77,4 +91,6 @@ def test_add_with_different_class():
     phone = Phone("Nokia", 299, 2, 1)
     with pytest.raises(TypeError):
         total_quantity = phone + 5
-
+    item1 = Item("Смартфон", 10000, 20)
+    with pytest.raises(TypeError):
+        remaining_quantity = item1 - 5
