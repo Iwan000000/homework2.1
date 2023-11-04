@@ -1,4 +1,20 @@
 import csv
+import os
+
+
+class InstantiateCSVError(Exception):
+    """
+    Ошибка, возникающая при проблемах с инстанциацией из CSV файла
+    """
+    def __init__(self, filename: str):
+        """
+        Инициализация объекта ошибки
+        :param filename: Имя файла, в котором произошла ошибка
+        """
+        self.filename = filename
+
+        if '!' in self.filename:
+            raise Exception(f'{self.filename} повреждён')
 
 
 class Item:
@@ -82,6 +98,28 @@ class Item:
         cls.all = items
         return items
 
+    @classmethod
+    def instantiate_from_csv(cls, filename=""):
+        """
+        Создает экземпляры Item из CSV файла
+        :param filename: Имя CSV файла
+        :return: Список экземпляров Item
+        """
+        cls.all = []
+        ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+        try:
+            with open(os.path.join(ROOT_DIR, filename), newline='') as file:
+                rows = csv.DictReader(file)
+                for row in rows:
+                    name, price, quantity = row['name'], float(row['price']), int(row['quantity'])
+                    item = cls(name, price, quantity)
+                    cls.all.append(item)
+        except FileNotFoundError:
+            return f'Отсутствует файл {filename}'
+        except InstantiateCSVError(filename) as e:
+            return e
+        cls.all = list({item.name: item for item in cls.all}.values())
+        return cls.all
 
     def __repr__(self):
         """

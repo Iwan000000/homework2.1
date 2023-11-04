@@ -94,3 +94,57 @@ def test_add_with_different_class():
     item1 = Item("Смартфон", 10000, 20)
     with pytest.raises(TypeError):
         remaining_quantity = item1 - 5
+
+def test_instantiate_csv_error_with_exclamation_mark():
+    with pytest.raises(InstantiateCSVError) as excinfo:
+        raise InstantiateCSVError('file!.csv')
+    assert str(excinfo.value) == 'file!.csv повреждён'
+
+
+def test_instantiate_csv_error_with_normal_filename():
+    with pytest.raises(InstantiateCSVError) as excinfo:
+        raise InstantiateCSVError('file.csv')
+    assert str(excinfo.value) == 'file.csv повреждён'
+
+
+def test_instantiate_csv_error_with_empty_filename():
+    with pytest.raises(InstantiateCSVError) as excinfo:
+        raise InstantiateCSVError('')
+    assert str(excinfo.value) == ' повреждён'
+
+
+def test_instantiate_from_csv_success():
+    filename = 'valid_file.csv'
+    # Заглушка для чтения из файла
+    rows = [
+        {'name': 'item1', 'price': '10.5', 'quantity': '20'},
+        {'name': 'item2', 'price': '15.0', 'quantity': '10'},
+    ]
+    with patch('builtins.open', mock_open(read_data='')) as mock_file:
+        # Заменяем rows на заглушку для проверки функциональности чтения csv
+        mock_csv.DictReader.return_value = rows
+        items = InstantiateCSVError.instantiate_from_csv(filename)
+    assert items == ['item1', 'item2']
+
+
+def test_instantiate_from_csv_file_not_found():
+    filename = 'missing_file.csv'
+    with patch('builtins.open', side_effect=FileNotFoundError):
+        result = InstantiateCSVError.instantiate_from_csv(filename)
+    assert result == f'Отсутствует файл {filename}'
+
+
+def test_instantiate_from_csv_corrupted_file():
+    filename = 'corrupted_file.csv'
+    with patch('builtins.open', mock_open(read_data='')) as mock_file:
+        # Заглушка для чтения из файла
+        rows = [
+            {'name': 'item1', 'price': '10.5', 'quantity': '20'},
+            {'name': 'item2', 'price': '15.0', 'quantity': '10'},
+        ]
+        # Добавляем строку с "повреждённым" именем
+        corrupted_row = {'name': 'item!', 'price': '5.0', 'quantity': '5'}
+        rows.append(corrupted_row)
+        mock_csv.DictReader.return_value = rows
+        result = InstantiateCSVError.instantiate_from_csv(filename)
+    assert str(result) == 'item! повреждён'
